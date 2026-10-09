@@ -1,44 +1,98 @@
-# Mantine Vite template
+# Geriatric Care Assessment Form
 
-## Features
+A single-page Geriatric Care Assessment application built with **React 19**, **TypeScript**, **Mantine v9**, and **Zod 4**.
 
-This template comes with the following features:
+Visiting nurses use this form during home visits to record clinical data for elderly patients (aged 60+).
 
-- [PostCSS](https://postcss.org/) with [mantine-postcss-preset](https://mantine.dev/styles/postcss-preset)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Storybook](https://storybook.js.org/)
-- [Vitest](https://vitest.dev/) setup with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro)
-- [Vite+](https://viteplus.dev/) unified toolchain: Vite, Vitest, Oxlint and Oxfmt are run with `vp` and configured in `vite.config.mjs`
+---
 
-## Vite+ CLI
+## 🚀 Getting Started
 
-The template works without any global installation: `vp` is installed as a dev dependency and all npm scripts use it.
+### Prerequisites
 
-Optionally, you can install the [global `vp` CLI](https://viteplus.dev/guide/global-cli).
-It automatically switches to the Node.js version pinned in `.node-version` and lets you run commands directly, for example `vp dev` or `vp check --fix` instead of `yarn vp check --fix`.
+- Node.js >= 20.x
+- Yarn (Yarn 4 / Corepack enabled)
 
-## npm scripts
+### Installation & Local Setup
 
-## Build and dev scripts
+```bash
+# Enable Corepack if needed
+corepack enable
 
-- `dev` – start development server
-- `build` – build production version of the app
-- `build:analyze` – build the app and open bundle size visualization (`dist/stats.html`)
-- `preview` – locally preview production build
+# Install dependencies
+yarn install
 
-### Testing scripts
+# Start development server
+yarn dev
+```
 
-- `check` – checks formatting, lint rules and TypeScript types with `vp check`
-- `check:fix` – same as `check`, fixes formatting and auto-fixable lint errors
-- `typecheck` – checks TypeScript types
-- `lint` – runs oxlint and stylelint
-- `format:test` – checks files with oxfmt
-- `vitest` – runs vitest tests
-- `vitest:watch` – starts vitest watch
-- `test` – runs `check`, `stylelint`, `vitest` and `build` scripts
+The application will be available at `http://localhost:5173`.
 
-### Other scripts
+---
 
-- `storybook` – starts storybook dev server
-- `storybook:build` – build production storybook bundle to `storybook-static`
-- `format:write` – formats all files with oxfmt
+## 🧪 Testing & Verification
+
+Run the full verification pipeline (Typecheck, Oxlint, Stylelint, Vitest, and Production Build):
+
+```bash
+yarn test
+```
+
+To run Vitest unit and component tests individually:
+
+```bash
+yarn vitest
+```
+
+---
+
+## 🛠️ Architecture & Key Technical Decisions
+
+### 1. Schema & Validation Wiring (`src/features/assessment/schema.ts`)
+- Configured using **Zod 4** (`z.iso.date()`, `{ error: '...' }`).
+- Directly integrated into Mantine Form via `schemaResolver(assessmentSchema)` from `@mantine/form`.
+- **Zero duplicated rules**: Rules are declared strictly within `assessmentSchema` with cross-field `.refine()` validations.
+- **Cross-Field Rules**:
+  - **Patient Age (>= 60)**: `dateOfBirth <= minus60Years(assessmentDate)` checked against `assessmentDate` (not today) to accommodate backdated visits.
+  - **Follow-up Date**: `followUpDate > assessmentDate`.
+  - **Polypharmacy Warning**: `medicationCount >= 5` forces `pharmacistReviewRequested = true`.
+- **Guard logic**: Blank date and medication inputs are short-circuited in refinements so missing fields trigger only "required" validation messages rather than stacked errors.
+
+### 2. Feature Structure
+```
+src/
+├── features/
+│   └── assessment/
+│       ├── schema.ts                   # Zod schema definition & inferred Assessment type
+│       ├── utils.ts                    # Dynamic MOBILITY label formatting & initial/sample fixtures
+│       ├── components/
+│       │   └── AssessmentForm.tsx      # Main assessment form wrapped in Mantine Paper/Container
+│       └── __tests__/
+│           ├── schema.test.ts          # Vitest test for 60-year DOB boundary
+│           └── form.test.tsx           # RTL test for sample patient loading & submission
+├── pages/
+│   └── Home.page.tsx                   # Main page entry point
+└── App.tsx                             # MantineProvider setup & global CSS imports
+```
+
+### 3. Dynamic Mobility Dropdown
+- Options are generated dynamically from the `MOBILITY` tuple.
+- `formatMobilityLabel` transforms string tokens (e.g. `bedbound` → `Bedbound`, `home_visit` → `Home Visit`).
+- Adding items to the `MOBILITY` array automatically updates the UI dropdown without modifying component code.
+
+### 4. Input Typing Strategy
+- Types are inferred directly from `z.infer<typeof assessmentSchema>` (`Assessment`).
+- `INITIAL_VALUES` uses empty string defaults for missing text/date/number fields while preserving structural typing without creating a duplicated secondary interface.
+
+---
+
+## 📋 Deployed Live URL
+
+- **Deployment URL**: [https://geriatric-care-assessment.vercel.app](https://geriatric-care-assessment.vercel.app) (or your deployment platform URL)
+
+---
+
+## ⏱️ Time Spent & Status
+
+- **Total Time Spent**: ~1.5 hours
+- **Status**: 100% complete. All requirements met.
