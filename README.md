@@ -6,6 +6,12 @@ Visiting nurses use this form during home visits to record clinical data for eld
 
 ---
 
+## 🌐 Live Deployment
+
+- **Deployed Application URL**: [https://geriatric-assessment-form-nro7.vercel.app/](https://geriatric-assessment-form-nro7.vercel.app/)
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -88,5 +94,5 @@ src/
 
 ## ⏱️ Time Spent & Status
 
-- **Total Time Spent**: ~1.5 hours
+- **Total Time Spent**: < 2 hours (~1.5 hours)
 - **Status**: 100% complete. All requirements met.
