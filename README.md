@@ -86,12 +86,6 @@ src/
 
 ---
 
-## 📋 Deployed Live URL
-
-- **Deployment URL**: [https://geriatric-care-assessment.vercel.app](https://geriatric-care-assessment.vercel.app) (or your deployment platform URL)
-
----
-
 ## ⏱️ Time Spent & Status
 
 - **Total Time Spent**: ~1.5 hours
